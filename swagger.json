@@ -1,0 +1,357 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Quero Educação API",
+    "description": "Avaliação para vaga de desenvolvedor.",
+    "termsOfService": "http://api_url/terms/",
+    "contact": {
+      "email": "valentim_araujo@yahoo.com.br"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000/api/v1",
+      "description": "Local server"
+    },
+    {
+      "url": "http://production-server/api/v1",
+      "description": "Production Server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "course",
+      "description": "List all courses"
+    },
+    {
+      "name": "offer",
+      "description": "List all offers"
+    }
+  ],
+  "paths": {
+    "/courses": {
+      "get": {
+        "tags": [
+          "course"
+        ],
+        "summary": "Finds Courses by filters",
+        "operationId": "findCoursesByFilters",
+        "parameters": [
+          {
+            "name": "universty",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "shift",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "$ref": "#/components/schemas/Shift"
+            }
+          },
+          {
+            "name": "level",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "$ref": "#/components/schemas/Level"
+            }
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "$ref": "#/components/schemas/Kind"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Courses"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/offers": {
+      "get": {
+        "tags": [
+          "offer"
+        ],
+        "summary": "Finds Offers by filters",
+        "operationId": "findOffersByFilters",
+        "parameters": [
+          {
+            "name": "universty",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "city",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "course",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "shift",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "$ref": "#/components/schemas/Shift"
+            }
+          },
+          {
+            "name": "level",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "$ref": "#/components/schemas/Level"
+            }
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "$ref": "#/components/schemas/Kind"
+            }
+          },
+          {
+            "name": "orderByValue",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "$ref": "#/components/schemas/OrderBy"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Offers"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {}
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "OrderBy": {
+        "type": "string",
+        "enum": [
+          "desc",
+          "asc"
+        ]
+      },
+      "Shift": {
+        "type": "string",
+        "enum": [
+          "Manhã",
+          "Tarde",
+          "Noite",
+          "Virtual"
+        ]
+      },
+      "Kind": {
+        "type": "string",
+        "enum": [
+          "Presencial",
+          "EaD"
+        ]
+      },
+      "Level": {
+        "type": "string",
+        "enum": [
+          "Bacharelado",
+          "Tecnólogo",
+          "Licenciatura"
+        ]
+      },
+      "Courses": {
+        "properties": {
+          "course": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "kind": {
+                "$ref": "#/components/schemas/Kind"
+              },
+              "level": {
+                "$ref": "#/components/schemas/Level"
+              },
+              "shift": {
+                "$ref": "#/components/schemas/Shift"
+              },
+              "university": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Anhanguera"
+                  },
+                  "score": {
+                    "type": "number",
+                    "example": 4.3
+                  },
+                  "logo_url": {
+                    "type": "string",
+                    "example": "https://www.tryimg.com/u/2019/04/16/anhanguera.png"
+                  }
+                }
+              },
+              "campus": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Rio Comprido"
+                  },
+                  "city": {
+                    "type": "string",
+                    "example": "São José dos Campos"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Offers": {
+        "properties": {
+          "full_price": {
+            "type": "number",
+            "example": 4560.98
+          },
+          "discount_percentage": {
+            "type": "number",
+            "example": 10
+          },
+          "start_date": {
+            "type": "string",
+            "example": "01/08/2019"
+          },
+          "enrollment_semester": {
+            "type": "number",
+            "example": 689.99
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "course": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "example": "Engenharia Mecânica"
+              },
+              "kind": {
+                "$ref": "#/components/schemas/Kind"
+              },
+              "level": {
+                "$ref": "#/components/schemas/Level"
+              },
+              "shift": {
+                "$ref": "#/components/schemas/Shift"
+              }
+            }
+          },
+          "university": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "example": "UNICSUL"
+              },
+              "score": {
+                "type": "number",
+                "example": 4.5
+              },
+              "logo_url": {
+                "type": "string",
+                "example": "https://www.tryimg.com/u/2019/04/16/unicsul.png"
+              }
+            }
+          },
+          "campus": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "example": "Paulista"
+              },
+              "city": {
+                "type": "string",
+                "example": "São Paulo"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

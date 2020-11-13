@@ -1,0 +1,6 @@
+/.idea
+/node_modules
+/dist
+yarn-error.log
+/src/database/database.sqlite
+/src/database/database-test.sqlite
