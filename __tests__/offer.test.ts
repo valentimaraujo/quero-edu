@@ -3,17 +3,28 @@ import { Kind, Level, Shift } from '@src/models/Course';
 import Helpers from './util/helpers';
 import { getConnection } from 'typeorm';
 import Offer from '@src/models/Offer';
+import User from '@src/models/User';
 
 describe('OFFER TEST', () => {
   let offerObj = Helpers.getOfferObj();
+  let authorization: User;
+  let bearer = {};
 
   beforeEach(async () => {
     offerObj = Helpers.getOfferObj();
+
+    const user = {
+      email: 'test@mail.com',
+      password: 'secret',
+    };
+    authorization = await Helpers.getValidToken(user);
+    bearer = { 'Authorization': `Bearer ${authorization}` };
   });
 
   describe('OFFER TEST FILTERS', () => {
     it('should return a list of offers', async () => {
-      const { status, body } = await testRequest.get(`${apiPrefix}/offers`);
+      const { status, body } = await testRequest.get(`${apiPrefix}/offers`)
+        .set(bearer);
       expect(status).toBe(200);
       expect(body[0]).toEqual(expect.objectContaining(offerObj));
     });
@@ -34,8 +45,8 @@ describe('OFFER TEST', () => {
       await Helpers.createOffer(offer);
 
       const { status, body } = await testRequest.get(
-        `${apiPrefix}/offers?course=${subStr}`,
-      );
+        `${apiPrefix}/offers?course=${subStr}`
+      ).set(bearer);
       expect(status).toBe(200);
       expect(body[0]).toEqual(expect.objectContaining(offerObj));
     });
@@ -56,8 +67,8 @@ describe('OFFER TEST', () => {
       await Helpers.createOffer(offer);
 
       const { status, body } = await testRequest.get(
-        `${apiPrefix}/offers?university=${subStr}`,
-      );
+        `${apiPrefix}/offers?university=${subStr}`
+      ).set(bearer);
       expect(status).toBe(200);
       expect(body[0]).toEqual(expect.objectContaining(offerObj));
     });
@@ -75,8 +86,8 @@ describe('OFFER TEST', () => {
       await Helpers.createOffer(offer);
 
       const { status, body } = await testRequest.get(
-        `${apiPrefix}/offers?kind=${offerObj.course.kind}`,
-      );
+        `${apiPrefix}/offers?kind=${offerObj.course.kind}`
+      ).set(bearer);
       expect(status).toBe(200);
       expect(body[0]).toEqual(expect.objectContaining(offerObj));
     });
@@ -94,8 +105,8 @@ describe('OFFER TEST', () => {
       await Helpers.createOffer(offer);
 
       const { status, body } = await testRequest.get(
-        `${apiPrefix}/offers?level=${offerObj.course.level}`,
-      );
+        `${apiPrefix}/offers?level=${offerObj.course.level}`
+      ).set(bearer);
       expect(status).toBe(200);
       expect(body[0]).toEqual(expect.objectContaining(offerObj));
     });
@@ -113,8 +124,8 @@ describe('OFFER TEST', () => {
       await Helpers.createOffer(offer);
 
       const { status, body } = await testRequest.get(
-        `${apiPrefix}/offers?shift=${offerObj.course.shift}`,
-      );
+        `${apiPrefix}/offers?shift=${offerObj.course.shift}`
+      ).set(bearer);
       expect(status).toBe(200);
       expect(body[0]).toEqual(expect.objectContaining(offerObj));
     });
@@ -135,8 +146,8 @@ describe('OFFER TEST', () => {
       await Helpers.createOffer(offer);
 
       const { status, body } = await testRequest.get(
-        `${apiPrefix}/offers?city=${subStr}`,
-      );
+        `${apiPrefix}/offers?city=${subStr}`
+      ).set(bearer);
       expect(status).toBe(200);
       expect(body[0]).toEqual(expect.objectContaining(offerObj));
     });
@@ -181,12 +192,12 @@ describe('OFFER TEST', () => {
 
       const { status, body } = await testRequest.get(
         `${apiPrefix}/offers?course=${subStrCourse}` +
-        `&kind=${offerObj.course.kind}` +
-        `&level=${offerObj.course.level}` +
-        `&shift=${offerObj.course.shift}` +
-        `&university=${subStrUniversity}` +
-        `&city=${subStrCampus}`,
-      );
+          `&kind=${offerObj.course.kind}` +
+          `&level=${offerObj.course.level}` +
+          `&shift=${offerObj.course.shift}` +
+          `&university=${subStrUniversity}` +
+          `&city=${subStrCampus}`
+      ).set(bearer);
       expect(status).toBe(200);
       expect(body[0]).toEqual(expect.objectContaining(offerObj));
     });
@@ -204,16 +215,18 @@ describe('OFFER TEST', () => {
           .from(Offer, 'offers')
           .getRawOne();
 
-        let res = await testRequest.get(`${apiPrefix}/offers?orderByValue=${v.order}`);
+        let res = await testRequest.get(
+          `${apiPrefix}/offers?orderByValue=${v.order}`
+        ).set(bearer);
         expect(res.body[0].price_with_discount).toEqual(num[v.alias]);
       });
     });
 
     it('should return a exception for invalid called(SQL INJECTION)', async () => {
-      const sqlInjection = ['\'1=1\'', 'admin\'--', '\' OR (1=1)' /* ...more */];
+      const sqlInjection = ["'1=1'", "admin'--", "' OR (1=1)" /* ...more */];
 
       sqlInjection.map(async (v) => {
-        let res = await testRequest.get(`${apiPrefix}/offers?shift=${v}`);
+        let res = await testRequest.get(`${apiPrefix}/offers?shift=${v}`).set(bearer);
         expect(res.status).toBe(500);
         expect(res.body).toEqual({ error: 'Internal server error' });
       });

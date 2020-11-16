@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { testRequest, apiPrefix } from './jest-setup';
 import { factory } from 'typeorm-seeding';
 import Faker from 'faker';
 import Course, { Kind, Level, Shift } from '@src/models/Course';
@@ -7,6 +8,7 @@ import Offer from '@src/models/Offer';
 import Campus from '@src/models/Campus';
 import { OfferView } from '@src/views/offer';
 import { CourseView } from '@src/views/course';
+import User from '@src/models/User';
 
 interface CourseFake {
   name?: string;
@@ -27,6 +29,11 @@ interface OfferFake {
   start_date?: number;
   enrollment_semester?: number;
   enabled?: boolean;
+}
+
+interface UserFake {
+  email?: string;
+  password?: string;
 }
 
 interface UniversityFake {
@@ -132,5 +139,22 @@ export default {
       name: campus.name || Faker.name.jobTitle(),
       city: campus.city || Faker.name.jobTitle(),
     });
+  },
+
+  async createUser(user: UserFake): Promise<User> {
+    return await factory(User)().create({
+      email: user.email || Faker.internet.email(),
+      password: user.password || Faker.internet.password(),
+    });
+  },
+
+  async getValidToken(user: UserFake): Promise<User> {
+    await this.createUser(user);
+    const res = await testRequest.post(`${apiPrefix}/user/authentication`).send({
+      email: user.email,
+      password: user.password,
+    });
+
+    return res.body.token;
   },
 };

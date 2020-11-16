@@ -2,13 +2,12 @@ import { SetupServer } from '@src/server';
 import supertest from 'supertest';
 import {
   factory,
-  runSeeder,
   tearDownDatabase,
   useRefreshDatabase,
   useSeeding,
 } from 'typeorm-seeding';
+import User from '@src/models/User';
 import Campus from '@src/models/Campus';
-import { Connection } from 'typeorm';
 import Course from '@src/models/Course';
 import University from '@src/models/University';
 import Offer from '@src/models/Offer';
@@ -27,6 +26,7 @@ beforeAll(async () => {
   await useRefreshDatabase({ connection: 'test' });
   await useSeeding();
 
+  await factory(User)().createMany(1);
   await factory(Campus)().createMany(10);
   await factory(University)().createMany(10);
   await factory(Course)().createMany(10);
@@ -37,4 +37,5 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await server.close();
+  tearDownDatabase();
 });

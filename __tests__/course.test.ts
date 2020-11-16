@@ -1,17 +1,28 @@
 import { testRequest, apiPrefix } from './util/jest-setup';
 import { Kind, Level, Shift } from '@src/models/Course';
 import Helpers from './util/helpers';
+import User from '@src/models/User';
 
 describe('COURSE TEST', () => {
   let courseObj = Helpers.getCourseObj();
+  let authorization: User;
+  let bearer = {};
 
   beforeEach(async () => {
     courseObj = Helpers.getCourseObj();
+
+    const user = {
+      email: 'test@mail.com',
+      password: 'secret',
+    };
+    authorization = await Helpers.getValidToken(user);
+    bearer = { 'Authorization': `Bearer ${authorization}` };
   });
 
   describe('COURSE TEST FILTERS', () => {
     it('should return a list of courses', async () => {
-      const { status, body } = await testRequest.get(`${apiPrefix}/courses`);
+      const { status, body } = await testRequest.get(`${apiPrefix}/courses`)
+        .set(bearer);
       expect(status).toBe(200);
       expect(body[0]).toEqual(expect.objectContaining(courseObj));
     });
@@ -32,8 +43,8 @@ describe('COURSE TEST', () => {
       await Helpers.createCourse(course);
 
       const { status, body } = await testRequest.get(
-        `${apiPrefix}/courses?university=${subStr}`
-      );
+        `${apiPrefix}/courses?university=${subStr}`,
+      ).set(bearer);
       expect(status).toBe(200);
       expect(body[0]).toEqual(expect.objectContaining(courseObj));
     });
@@ -46,8 +57,8 @@ describe('COURSE TEST', () => {
 
       await Helpers.createCourse(course);
       const { status, body } = await testRequest.get(
-        `${apiPrefix}/courses?kind=${courseObj.course.kind}`
-      );
+        `${apiPrefix}/courses?kind=${courseObj.course.kind}`,
+      ).set(bearer);
       expect(status).toBe(200);
       expect(body[0]).toEqual(expect.objectContaining(courseObj));
     });
@@ -60,8 +71,8 @@ describe('COURSE TEST', () => {
 
       await Helpers.createCourse(course);
       const { status, body } = await testRequest.get(
-        `${apiPrefix}/courses?level=${courseObj.course.level}`
-      );
+        `${apiPrefix}/courses?level=${courseObj.course.level}`,
+      ).set(bearer);
       expect(status).toBe(200);
       expect(body[0]).toEqual(expect.objectContaining(courseObj));
     });
@@ -74,8 +85,8 @@ describe('COURSE TEST', () => {
 
       await Helpers.createCourse(course);
       const { status, body } = await testRequest.get(
-        `${apiPrefix}/courses?shift=${courseObj.course.shift}`
-      );
+        `${apiPrefix}/courses?shift=${courseObj.course.shift}`,
+      ).set(bearer);
       expect(status).toBe(200);
       expect(body[0]).toEqual(expect.objectContaining(courseObj));
     });
@@ -91,7 +102,9 @@ describe('COURSE TEST', () => {
 
       const strUniversity = 'Best University in the World';
       const subStrUniversity = strUniversity.substring(0, 10);
-      courseObj.course.university.name = expect.stringContaining(subStrUniversity);
+      courseObj.course.university.name = expect.stringContaining(
+        subStrUniversity,
+      );
       const university = {
         name: strUniversity,
       };
@@ -119,16 +132,16 @@ describe('COURSE TEST', () => {
         `&shift=${Shift.EVENING}` +
         `&university=${subStrUniversity}` +
         `&city=${subStrCampus}`,
-      );
+      ).set(bearer);
       expect(status).toBe(200);
       expect(body[0]).toEqual(expect.objectContaining(courseObj));
     });
 
     it('should return a exception for invalid called(SQL INJECTION)', async () => {
-      const sqlInjection = ["'1=1'", "admin'--", "' OR (1=1)" /* ...more */];
+      const sqlInjection = ['\'1=1\'', 'admin\'--', '\' OR (1=1)' /* ...more */];
 
       sqlInjection.map(async (v) => {
-        let res = await testRequest.get(`${apiPrefix}/courses?shift=${v}`);
+        let res = await testRequest.get(`${apiPrefix}/courses?shift=${v}`).set(bearer);
         expect(res.status).toBe(500);
         expect(res.body).toEqual({ error: 'Internal server error' });
       });

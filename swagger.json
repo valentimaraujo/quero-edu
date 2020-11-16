@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Quero Educação API",
-    "description": "Avaliação para vaga de desenvolvedor.",
+    "description": "Avaliação para um vaga de desenvolvedor.",
     "termsOfService": "http://api_url/terms/",
     "contact": {
       "email": "valentim_araujo@yahoo.com.br"
@@ -25,15 +25,57 @@
   ],
   "tags": [
     {
+      "name": "user",
+      "description": "User list actions"
+    },
+    {
       "name": "course",
-      "description": "List all courses"
+      "description": "Course list actions"
     },
     {
       "name": "offer",
-      "description": "List all offers"
+      "description": "Offer list actions"
     }
   ],
   "paths": {
+    "/user/authentication": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "User authentication",
+        "operationId": "userAuthentication",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserAuth"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
     "/courses": {
       "get": {
         "tags": [
@@ -41,6 +83,11 @@
         ],
         "summary": "Finds Courses by filters",
         "operationId": "findCoursesByFilters",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "universty",
@@ -95,9 +142,11 @@
               }
             }
           },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
           "500": {
-            "description": "Internal server error",
-            "content": {}
+            "description": "Internal server error"
           }
         }
       }
@@ -109,6 +158,11 @@
         ],
         "summary": "Finds Offers by filters",
         "operationId": "findOffersByFilters",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "universty",
@@ -189,9 +243,11 @@
               }
             }
           },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
           "500": {
-            "description": "Internal server error",
-            "content": {}
+            "description": "Internal server error"
           }
         }
       }
@@ -229,6 +285,41 @@
           "Tecnólogo",
           "Licenciatura"
         ]
+      },
+      "UserAuth": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "faker@user.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "secret"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEyMzQ1Njc4OTAifQ.YvMxW71Ks51LWie2oNEkq2XhrZe-RCKhuqSQj4dJp5o"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "example": "John Doe"
+              },
+              "email": {
+                "type": "string",
+                "example": "faker@user.com"
+              }
+            }
+          }
+        }
       },
       "Courses": {
         "properties": {
@@ -351,6 +442,18 @@
             }
           }
         }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "responses": {
+      "UnauthorizedError": {
+        "description": "Access token is missing or invalid"
       }
     }
   }

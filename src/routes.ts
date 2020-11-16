@@ -1,7 +1,9 @@
 import Router, { Request, Response } from 'express';
 
+import auth from './routes/auth';
 import offer from './routes/offer';
 import course from './routes/course';
+import authMiddleware from '@src/middlewares/authMiddleware';
 
 const router = Router();
 
@@ -12,7 +14,8 @@ router.get('/', (_: Request, res: Response) => {
   });
 });
 
-router.use('/offers', offer);
-router.use('/courses', course);
+router.use('/user', auth);
+router.use('/offers', authMiddleware, offer);
+router.use('/courses', authMiddleware, course);
 
 export default router;

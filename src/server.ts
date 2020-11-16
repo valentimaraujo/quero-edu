@@ -31,6 +31,7 @@ export class SetupServer {
 
   public async initTest(): Promise<void> {
     this.setupExpress();
+    this.docsSetup();
     this.routes();
   }
 
