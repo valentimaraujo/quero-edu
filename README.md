@@ -1,5 +1,10 @@
 ![logo-quero-edu-small](https://user-images.githubusercontent.com/1139813/90247813-c9cfc780-de0d-11ea-9a97-485a7212d9dd.png)
 
+## Indice
+- [Instruções](#objetivo)
+- [Instruções de uso](#instrucoes-de-uso)
+
+
 ## Objetivo
 
 O Quero Bolsa é um marketplace de bolsas de estudo, que já ajudou milhares de alunos a escolher e ingressar no curso ideal, por um preço que podem pagar. A sua missão é criar uma API para exibição e filtragem de ofertas de curso.
@@ -90,3 +95,63 @@ A estrutura do JSON de cursos é a seguinte:
 - Implementar autenticação da API usando JWT
 - Implementar cache nos endpoints
 - Disponilizar sua aplicação online utilizando um serviço de sua preferência, como Heroku ou AWS, por exemplo
+
+
+## Instruções de uso
+
+Clonando o repositório:
+
+```
+git clone https://github.com/valentimaraujo/quero-edu.git
+```
+
+Baixando os pacotes necessários:
+
+```
+cd quero-edu
+
+npm install
+or
+yarn install
+```
+
+Rodando as migrations:
+
+```
+npm run migration:run
+or
+yarn migration:run
+```
+
+Rodando as seeds:
+
+```
+npm run seed:runAll
+or
+yarn seed:runAll
+```
+
+Rodando a aplicação:
+
+```
+npm run start:local # localhost:8000
+or
+yarn start:local # localhost:8000
+```
+
+Rodando os testes:
+
+```
+npm run test
+or
+yarn test
+
+# Mostra a lista de testes executados
+npm run test --verbose
+or
+yarn test --verbose
+```
+
+Para ter acesso a todos os endpoints da aplicação, com a aplicação rodando acesse: 
+[localhost:8000/docs](localhost:8000/docs)
+

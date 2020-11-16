@@ -17,8 +17,8 @@
     "migration:create": "yarn typeorm migration:create -c development -n",
     "migration:run": "yarn typeorm migration:run -c development",
     "seed:config": "ts-node ./node_modules/typeorm-seeding/dist/cli.js config",
-    "seed:run": "ts-node --project ./tsconfig.json -r ./node_modules/tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js  -c development seed",
-    "seed:runAll": "yarn seed:run -s CreateUsers -c development && yarn seed:run -s CreateUniversities -c development && yarn seed:run -s CreateCampus -c development && yarn seed:run -s CreateCourses -c development && yarn seed:run -s CreateOffers -c development",
+    "seed:run": "ts-node --project ./tsconfig.json -r ./node_modules/tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js -c development seed",
+    "seed:runAll": "yarn seed:run -s CreateUsers && yarn seed:run -s CreateUniversities && yarn seed:run -s CreateCampus && yarn seed:run -s CreateCourses && yarn seed:run -s CreateOffers",
     "test": "cross-env NODE_ENV=test jest --runInBand"
   },
   "devDependencies": {
