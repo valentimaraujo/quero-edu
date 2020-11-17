@@ -4,11 +4,11 @@ import courseView from '@src/views/course';
 
 const queryFilterBuild = async (req: Request): Promise<string> => {
   const {
-    university = null,
-    city = null,
-    kind = null,
-    level = null,
-    shift = null,
+    university = undefined,
+    city = undefined,
+    kind = undefined,
+    level = undefined,
+    shift = undefined,
   } = req.query;
 
   const SQL_FILTER: any = [];
